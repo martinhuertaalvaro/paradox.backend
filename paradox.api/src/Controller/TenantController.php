@@ -39,7 +39,7 @@ class TenantController extends AbstractController
     public function info(Request $request, EntityManagerInterface $entityManager)
     {
         $tenantCode = $request->query->get('code');
-        $tenantIsActive = $request->query->get('active');
+        $tenantIsActive = ($request->query->get('active') === 'true');
         $encoders = [new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
