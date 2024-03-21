@@ -28,6 +28,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Tenant $tenantId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -96,5 +100,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getTenantId(): ?Tenant
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(?Tenant $tenantId): static
+    {
+        $this->tenantId = $tenantId;
+
+        return $this;
     }
 }
