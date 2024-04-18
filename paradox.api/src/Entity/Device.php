@@ -21,6 +21,13 @@ class Device
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'devices')]
     private Collection $acces;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Tenant $tenantId = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $adress = null;
+
     public function __construct()
     {
         $this->acces = new ArrayCollection();
@@ -63,6 +70,30 @@ class Device
     public function removeAcce(User $acce): static
     {
         $this->acces->removeElement($acce);
+
+        return $this;
+    }
+
+    public function getTenantId(): ?Tenant
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(?Tenant $tenantId): static
+    {
+        $this->tenantId = $tenantId;
+
+        return $this;
+    }
+
+    public function getAdress(): ?string
+    {
+        return $this->adress;
+    }
+
+    public function setAdress(string $adress): static
+    {
+        $this->adress = $adress;
 
         return $this;
     }

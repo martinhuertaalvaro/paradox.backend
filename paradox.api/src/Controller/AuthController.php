@@ -23,7 +23,6 @@ class AuthController extends AbstractController
   public function verify(EntityManagerInterface $entityManager, Request $request): JsonResponse
   {
     $userEmail = $request->query->get('username');
-    $userPassword = $request->query->get('password');
     $userTenantId = $request->query->get('tenantId');
     $encoders = [new JsonEncoder()];
     $normalizers = [new ObjectNormalizer()];

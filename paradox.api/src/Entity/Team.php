@@ -21,6 +21,10 @@ class Team
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'teams')]
     private Collection $members;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Tenant $tenantId = null;
+
     public function __construct()
     {
         $this->members = new ArrayCollection();
@@ -63,6 +67,18 @@ class Team
     public function removeMember(User $member): static
     {
         $this->members->removeElement($member);
+
+        return $this;
+    }
+
+    public function getTenantId(): ?Tenant
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(?Tenant $tenantId): static
+    {
+        $this->tenantId = $tenantId;
 
         return $this;
     }
