@@ -20,13 +20,14 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class DeviceController extends AbstractController
 {
   #[Route('/all', name: 'get_all_device', methods: ['GET'])]
-  public function all(EntityManagerInterface $entityManager): JsonResponse
+  public function all(Request $request, EntityManagerInterface $entityManager): JsonResponse
   {
+    $tenantId = $request->query->get('tenantId');
     $encoders = [new JsonEncoder()];
     $normalizers = [new ObjectNormalizer()];
     $serializer = new Serializer($normalizers, $encoders);
     $repository = $entityManager->getRepository(Device::class);
-    $users = $repository->findAll();
+    $users = $repository->findBy(['tenantId' => $tenantId]);
 
     // Convertir los objetos Users directamente a JSON
     $jsonContent = $serializer->serialize($users, 'json');
