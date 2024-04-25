@@ -40,6 +40,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Team::class, mappedBy: 'members')]
     private Collection $teams;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $surname = null;
+
     public function __construct()
     {
         $this->devices = new ArrayCollection();
@@ -116,9 +122,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getTenantId(): ?Tenant
+    public function getTenantId(): ?int
     {
-        return $this->tenantId;
+        return $this->tenantId->getId();
     }
 
     public function setTenantId(?Tenant $tenantId): static
@@ -178,6 +184,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->teams->removeElement($team)) {
             $team->removeMember($this);
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSurname(): ?string
+    {
+        return $this->surname;
+    }
+
+    public function setSurname(?string $surname): static
+    {
+        $this->surname = $surname;
 
         return $this;
     }

@@ -25,9 +25,13 @@ class Team
     #[ORM\JoinColumn(nullable: false)]
     private ?Tenant $tenantId = null;
 
+    #[ORM\ManyToMany(targetEntity: Device::class)]
+    private Collection $devices;
+
     public function __construct()
     {
         $this->members = new ArrayCollection();
+        $this->devices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -79,6 +83,30 @@ class Team
     public function setTenantId(?Tenant $tenantId): static
     {
         $this->tenantId = $tenantId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Device>
+     */
+    public function getDevices(): Collection
+    {
+        return $this->devices;
+    }
+
+    public function addDevice(Device $device): static
+    {
+        if (!$this->devices->contains($device)) {
+            $this->devices->add($device);
+        }
+
+        return $this;
+    }
+
+    public function removeDevice(Device $device): static
+    {
+        $this->devices->removeElement($device);
 
         return $this;
     }
