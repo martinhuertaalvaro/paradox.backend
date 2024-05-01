@@ -46,7 +46,7 @@ class UserController extends AbstractController
     $serializer = new Serializer($normalizers, $encoders);
     $repository = $entityManager->getRepository(User::class);
     $tenantInfo = $repository->findOneBy(['email' => $email, 'tenantId' => $tenantId]);
-
+    $tenantInfo->setPassword('');
     // Convertir los objetos Users directamente a JSON
     $jsonContent = $serializer->serialize($tenantInfo, 'json');
 

@@ -124,8 +124,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getTenantId(): ?int
     {
-        return $this->tenantId->getId();
+        if ($this->tenantId !== null) {
+            return $this->tenantId->getId();
+        }
+        return null;
     }
+
 
     public function setTenantId(?Tenant $tenantId): static
     {
@@ -135,11 +139,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Device>
+     * @return Collection<int, int>
      */
     public function getDevices(): Collection
     {
-        return $this->devices;
+        return $this->devices->map(function ($device) {
+            return $device->getName();
+        });
     }
 
     public function addDevice(Device $device): static
@@ -162,11 +168,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Team>
+     * @return Collection<int, int>
      */
     public function getTeams(): Collection
     {
-        return $this->teams;
+        return $this->teams->map(function ($team) {
+            return $team->getName();
+        });
     }
 
     public function addTeam(Team $team): static
