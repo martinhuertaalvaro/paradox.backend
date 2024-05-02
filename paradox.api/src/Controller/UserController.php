@@ -53,4 +53,40 @@ class UserController extends AbstractController
     // Crear y devolver una JsonResponse
     return new JsonResponse($jsonContent, 200, [], true);
   }
+
+  /* #[Route('/new', name: 'api_new_user', methods: 'POST')]
+  public function createUser(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
+  {
+    $request = $this->transformJsonBody($request);
+    $user = new User();
+    $user->setEmail($request->get('email'));
+    $user->setPassword(
+        $passwordHasher->hashPassword(
+            $user,
+            $request->get('password')
+        )
+    );
+    $user->setRoles($request->get('role'));
+    $user->setName($request->get('name'));
+    $user->setSurname($request->get('surname'));
+    $user->setBirthdate($request->get('birthdate'));
+
+    $em->persist($user);
+    $em->flush();
+
+    return new JsonResponse(['status' => 'user_created']);
+  }
+
+  protected function transformJsonBody(Request $request)
+  {
+    $data = json_decode($request->getContent(), true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return null;
+    } else if ($data === null) {
+        return $request;
+    }
+
+    $request->request->replace($data);
+    return $request;
+  } */
 }
