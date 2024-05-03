@@ -28,7 +28,7 @@ class FormCreateController extends AbstractController
     $normalizers = [new ObjectNormalizer()];
     $serializer = new Serializer($normalizers, $encoders);
     $entity = ($typeEntity == 'user') ? new User : (($typeEntity == 'device') ? new Device : new Team);
-
+    $entity == new User ? $entity->setPassword('') : null;
     // Convertir los objetos Users directamente a JSON
     $jsonContent = $serializer->serialize($entity, 'json');
 

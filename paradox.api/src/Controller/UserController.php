@@ -54,17 +54,17 @@ class UserController extends AbstractController
     return new JsonResponse($jsonContent, 200, [], true);
   }
 
-  /* #[Route('/new', name: 'api_new_user', methods: 'POST')]
+  #[Route('/new', name: 'api_new_user', methods: 'POST')]
   public function createUser(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
   {
     $request = $this->transformJsonBody($request);
     $user = new User();
     $user->setEmail($request->get('email'));
     $user->setPassword(
-        $passwordHasher->hashPassword(
-            $user,
-            $request->get('password')
-        )
+      $passwordHasher->hashPassword(
+        $user,
+        $request->get('password')
+      )
     );
     $user->setRoles($request->get('role'));
     $user->setName($request->get('name'));
@@ -81,12 +81,12 @@ class UserController extends AbstractController
   {
     $data = json_decode($request->getContent(), true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        return null;
+      return null;
     } else if ($data === null) {
-        return $request;
+      return $request;
     }
 
     $request->request->replace($data);
     return $request;
-  } */
+  }
 }
