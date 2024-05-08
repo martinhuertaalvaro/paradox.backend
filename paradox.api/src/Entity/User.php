@@ -50,6 +50,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $birthdate = null;
 
+    #[ORM\Column]
+    private ?bool $active = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $city = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $workfield = null;
+
     public function __construct()
     {
         $this->devices = new ArrayCollection();
@@ -236,6 +245,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $birthdate = \DateTimeImmutable::createFromFormat('Y-m-d', $birthdate);
         $this->birthdate = $birthdate;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(?string $city): static
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getWorkfield(): ?string
+    {
+        return $this->workfield;
+    }
+
+    public function setWorkfield(?string $workfield): static
+    {
+        $this->workfield = $workfield;
 
         return $this;
     }
