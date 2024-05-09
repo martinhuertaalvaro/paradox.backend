@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-
+use App\Entity\Tenant;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,8 +57,12 @@ class UserController extends AbstractController
   #[Route('/new', name: 'api_new_user', methods: 'POST')]
   public function createUser(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
   {
+    $tenantId = $request->query->get('tenantId');
     $request = $this->transformJsonBody($request);
     $user = new User();
+    $repository = $em->getRepository(Tenant::class);
+    $tenantInfo = $repository->findOneBy(['id' => $tenantId]);
+    $user->setTenantId($tenantInfo);
     $user->setEmail($request->get('email'));
     $user->setPassword(
       $passwordHasher->hashPassword(
@@ -66,10 +70,14 @@ class UserController extends AbstractController
         $request->get('password')
       )
     );
-    $user->setRoles($request->get('role'));
+    if($request->get('rol') == 'admin') $user->setRoles(['ROLE_ADMIN']);
     $user->setName($request->get('name'));
     $user->setSurname($request->get('surname'));
     $user->setBirthdate($request->get('birthdate'));
+    $user->setRegisterdate($request->get('dateOfRegister'));
+    $user->setCity($request->get('city'));
+    $user->setWorkfield($request->get('workfield'));
+    $user->setActive(true);
 
     $em->persist($user);
     $em->flush();

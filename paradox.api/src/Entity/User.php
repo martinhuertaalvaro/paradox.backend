@@ -59,6 +59,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $workfield = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $registerdate = null;
+
     public function __construct()
     {
         $this->devices = new ArrayCollection();
@@ -146,6 +149,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setTenantId(?Tenant $tenantId): static
     {
+        
         $this->tenantId = $tenantId;
 
         return $this;
@@ -249,6 +253,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getRegisterdate()
+    {
+        if ($this->registerdate !== null) {
+            return date('Y-m-d', $this->registerdate->getTimestamp());
+        }
+        return null;
+    }
+
+    public function setRegisterdate(?string $registerdate): static
+    {
+        $registerdate = \DateTimeImmutable::createFromFormat('Y-m-d', $registerdate);
+        $this->registerdate = $registerdate;
+
+        return $this;
+    }
+
     public function isActive(): ?bool
     {
         return $this->active;
@@ -284,4 +304,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 }
