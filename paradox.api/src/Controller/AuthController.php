@@ -28,7 +28,7 @@ class AuthController extends AbstractController
     $normalizers = [new ObjectNormalizer()];
     $serializer = new Serializer($normalizers, $encoders);
     $repository = $entityManager->getRepository(User::class);
-    $userVerified = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $userTenantId]);
+    $userVerified = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $userTenantId, 'active' => true]);
 
     $verified = $userVerified !== null ? true : false;
 

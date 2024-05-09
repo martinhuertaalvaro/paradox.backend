@@ -84,7 +84,7 @@ class UserController extends AbstractController
     $em->persist($user);
     $em->flush();
 
-    return new JsonResponse(['status' => 'user_created']);
+    return new JsonResponse(['status' => 'User Created', 'email' => $request->get('email')]);
   }
 
   protected function transformJsonBody(Request $request)
