@@ -107,9 +107,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): static
+     public function setRoles($roles): static
     {
-        $this->roles = $roles;
+        $this->roles[] = $roles;
 
         return $this;
     }
@@ -149,7 +149,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setTenantId(?Tenant $tenantId): static
     {
-        
+
         $this->tenantId = $tenantId;
 
         return $this;

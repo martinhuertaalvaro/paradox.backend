@@ -70,7 +70,9 @@ class UserController extends AbstractController
         $request->get('password')
       )
     );
-    if($request->get('rol') == 'admin') $user->setRoles(['ROLE_ADMIN']);
+    if($request->get('role') == 'admin') {
+      $user->setRoles("ROLE_ADMIN");
+    }
     $user->setName($request->get('name'));
     $user->setSurname($request->get('surname'));
     $user->setBirthdate($request->get('birthdate'));
