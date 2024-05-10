@@ -7,3 +7,4 @@ WHERE id = 6;
 //crear registro
 
 INSERT INTO BBDD.TABLA ( //campos ) VALUES ( //valores );
+INSERT INTO bbddparadox.tenant ( name,code,active ) VALUES ( 'PARADOX' ,'paradox',true);
