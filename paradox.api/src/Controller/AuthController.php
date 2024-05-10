@@ -24,6 +24,7 @@ class AuthController extends AbstractController
   {
     $userEmail = $request->query->get('username');
     $userTenantId = $request->query->get('tenantId');
+    $userPassword = $request->query->get('password');
     $encoders = [new JsonEncoder()];
     $normalizers = [new ObjectNormalizer()];
     $serializer = new Serializer($normalizers, $encoders);
