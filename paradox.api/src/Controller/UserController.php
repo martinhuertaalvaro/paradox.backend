@@ -28,6 +28,29 @@ class UserController extends AbstractController
     $serializer = new Serializer($normalizers, $encoders);
     $repository = $entityManager->getRepository(User::class);
     $users = $repository->findBy(['tenantId' => $tenantId]);
+    foreach ($users as $user) {
+      $user->setPassword('');
+    }
+
+    // Convertir los objetos Users directamente a JSON
+    $jsonContent = $serializer->serialize($users, 'json');
+
+    // Crear y devolver una JsonResponse
+    return new JsonResponse($jsonContent, 200, ['status' => 'user_listall'], true);
+  }
+
+  #[Route('/members', name: 'get_all_members', methods: ['GET'])]
+  public function members(Request $request, EntityManagerInterface $entityManager): JsonResponse
+  {
+    $tenantId = $request->query->get('tenantId');
+    $encoders = [new JsonEncoder()];
+    $normalizers = [new ObjectNormalizer()];
+    $serializer = new Serializer($normalizers, $encoders);
+    $repository = $entityManager->getRepository(User::class);
+    $users = $repository->findBy(['tenantId' => $tenantId, 'active' => true]);
+    foreach ($users as $user) {
+      $user->setPassword('');
+    }
 
     // Convertir los objetos Users directamente a JSON
     $jsonContent = $serializer->serialize($users, 'json');
