@@ -110,7 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-     public function setRoles($roles): static
+    public function setRoles($roles): static
     {
         $this->roles[] = $roles;
 
@@ -313,11 +313,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->friends;
     }
 
-    public function setFriends($friend): static
+    public function setOneFriend($friend): static
     {
         $this->friends[] = $friend;
 
         return $this;
     }
 
+    public function setFriends(?array $friends): static
+    {
+        $this->friends = $friends;
+
+        return $this;
+    }
 }

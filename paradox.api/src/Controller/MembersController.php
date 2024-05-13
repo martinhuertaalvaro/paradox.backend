@@ -50,7 +50,9 @@ class MembersController extends AbstractController
     $serializer = new Serializer($normalizers, $encoders);
     $repository = $entityManager->getRepository(User::class);
     $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
+    var_dump($user->getFriends());
     $user = $user->getFriends();
+
 
     // Convertir los objetos Users directamente a JSON
     $jsonContent = $serializer->serialize($user, 'json');
@@ -58,9 +60,9 @@ class MembersController extends AbstractController
     // Crear y devolver una JsonResponse
     return new JsonResponse($jsonContent, 200, ['status' => 'user_listall'], true);
   }
-  
+
   #[Route('/friend/new', name: 'api_new_friend', methods: 'POST')]
-  public function createUser(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
+  public function newFriend(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
   {
     $tenantId = $request->query->get('tenantId');
     $userEmail = $request->query->get('email');
@@ -69,16 +71,39 @@ class MembersController extends AbstractController
     $user = new User();
     $repository = $em->getRepository(User::class);
     $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
-    $user->setFriends($friendId);
-    
+    $user->setOneFriend($friendId);
+
 
     $em->persist($user);
     $em->flush();
 
-    return new JsonResponse(['status' => 'Friend Added', 'email' => $request->get('email')]);
+    return new JsonResponse(['status' => 'Friend Added']);
   }
 
-  
+  #[Route('/friend/delete', name: 'api_delete_friend', methods: 'POST')]
+  public function deleteFriend(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
+  {
+    $tenantId = $request->query->get('tenantId');
+    $userEmail = $request->query->get('email');
+    $friendId = $request->query->get('friendId');
+    $request = $this->transformJsonBody($request);
+    $user = new User();
+    $repository = $em->getRepository(User::class);
+    $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
+    $friends = $user->getFriends($friendId);
+
+    $friendIndex = array_search($friendId, $friends);
+    unset($friends[$friendIndex]);
+    $user->setFriends($friends);
+
+
+    $em->persist($user);
+    $em->flush();
+
+    return new JsonResponse(['status' => 'Friend Deleted']);
+  }
+
+
 
   protected function transformJsonBody(Request $request)
   {
