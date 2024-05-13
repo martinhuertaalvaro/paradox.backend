@@ -16,18 +16,19 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-#[Route('api-master/user')]
-class UserController extends AbstractController
+#[Route('api-master/members')]
+class MembersController extends AbstractController
 {
-  #[Route('/all', name: 'get_all_users', methods: ['GET'])]
-  public function all(Request $request, EntityManagerInterface $entityManager): JsonResponse
+
+  #[Route('/all', name: 'get_all_members', methods: ['GET'])]
+  public function members(Request $request, EntityManagerInterface $entityManager): JsonResponse
   {
     $tenantId = $request->query->get('tenantId');
     $encoders = [new JsonEncoder()];
     $normalizers = [new ObjectNormalizer()];
     $serializer = new Serializer($normalizers, $encoders);
     $repository = $entityManager->getRepository(User::class);
-    $users = $repository->findBy(['tenantId' => $tenantId]);
+    $users = $repository->findBy(['tenantId' => $tenantId, 'active' => true]);
     foreach ($users as $user) {
       $user->setPassword('');
     }
@@ -39,56 +40,42 @@ class UserController extends AbstractController
     return new JsonResponse($jsonContent, 200, ['status' => 'user_listall'], true);
   }
 
-
-  #[Route('/info', name: 'get_info_users', methods: ['GET'])]
-  public function info(Request $request, EntityManagerInterface $entityManager)
+  #[Route('/friends', name: 'get_all_friends', methods: ['GET'])]
+  public function allFriends(Request $request, EntityManagerInterface $entityManager): JsonResponse
   {
     $tenantId = $request->query->get('tenantId');
-    $email = $request->query->get('email');
+    $userEmail = $request->query->get('email');
     $encoders = [new JsonEncoder()];
     $normalizers = [new ObjectNormalizer()];
     $serializer = new Serializer($normalizers, $encoders);
     $repository = $entityManager->getRepository(User::class);
-    $tenantInfo = $repository->findOneBy(['email' => $email, 'tenantId' => $tenantId]);
-    $tenantInfo->setPassword('');
+    $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
+    $user = $user->getFriends();
+
     // Convertir los objetos Users directamente a JSON
-    $jsonContent = $serializer->serialize($tenantInfo, 'json');
+    $jsonContent = $serializer->serialize($user, 'json');
 
     // Crear y devolver una JsonResponse
-    return new JsonResponse($jsonContent, 200, [], true);
+    return new JsonResponse($jsonContent, 200, ['status' => 'user_listall'], true);
   }
-
-  #[Route('/new', name: 'api_new_user', methods: 'POST')]
+  
+  #[Route('/friend/new', name: 'api_new_friend', methods: 'POST')]
   public function createUser(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
   {
     $tenantId = $request->query->get('tenantId');
+    $userEmail = $request->query->get('email');
+    $friendId = $request->query->get('friendId');
     $request = $this->transformJsonBody($request);
     $user = new User();
-    $repository = $em->getRepository(Tenant::class);
-    $tenantInfo = $repository->findOneBy(['id' => $tenantId]);
-    $user->setTenantId($tenantInfo);
-    $user->setEmail($request->get('email'));
-    $user->setPassword(
-      $passwordHasher->hashPassword(
-        $user,
-        $request->get('password')
-      )
-    );
-    if($request->get('role') == 'admin') {
-      $user->setRoles("ROLE_ADMIN");
-    }
-    $user->setName($request->get('name'));
-    $user->setSurname($request->get('surname'));
-    $user->setBirthdate($request->get('birthdate'));
-    $user->setRegisterdate($request->get('dateOfRegister'));
-    $user->setCity($request->get('city'));
-    $user->setWorkfield($request->get('workfield'));
-    $user->setActive(true);
+    $repository = $em->getRepository(User::class);
+    $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
+    $user->setFriends($friendId);
+    
 
     $em->persist($user);
     $em->flush();
 
-    return new JsonResponse(['status' => 'User Created', 'email' => $request->get('email')]);
+    return new JsonResponse(['status' => 'Friend Added', 'email' => $request->get('email')]);
   }
 
   

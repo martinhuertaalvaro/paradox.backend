@@ -62,6 +62,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $registerdate = null;
 
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $friends = null;
+
     public function __construct()
     {
         $this->devices = new ArrayCollection();
@@ -301,6 +304,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setWorkfield(?string $workfield): static
     {
         $this->workfield = $workfield;
+
+        return $this;
+    }
+
+    public function getFriends(): ?array
+    {
+        return $this->friends;
+    }
+
+    public function setFriends($friend): static
+    {
+        $this->friends[] = $friend;
 
         return $this;
     }
