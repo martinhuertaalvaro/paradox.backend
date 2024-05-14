@@ -11,9 +11,6 @@ security:
         class: App\Entity\User
         property: email
   firewalls:
-    dev:
-      pattern: ^/(_(profiler|wdt)|css|images|js)/
-      security: false
     login:
       pattern: ^/api-auth/login_check
       stateless: true
@@ -25,6 +22,9 @@ security:
       pattern: ^/api
       stateless: true
       jwt: ~
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
     main:
       lazy: true
       provider: app_user_provider
@@ -33,8 +33,8 @@ security:
   # Note: Only the *first* access control that matches will be used
   access_control:
     - { path: ^/api-auth, roles: PUBLIC_ACCESS }
-    - { path: ^/api-master/tenant, roles: PUBLIC_ACCESS }
-    - { path: ^/api-master, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/api-master/tenant/info, roles: PUBLIC_ACCESS }
+    - { path: ^/api-master, roles: IS_AUTHENTICATED_FULLY } #IS_AUTHENTICATED_FULLY
 
 when@test:
   security:
