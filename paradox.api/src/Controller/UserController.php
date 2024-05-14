@@ -142,6 +142,19 @@ class UserController extends AbstractController
     return new JsonResponse(['status' => 'Admin added']);
   }
 
+  #[Route('/delete', name: 'api_user_delete', methods: ['DELETE'])]
+    public function delete(Request $request, EntityManagerInterface $em)
+    {
+      $tenantId = $request->query->get('tenantId');
+      $userEmail = $request->query->get('email');
+      $request = $this->transformJsonBody($request);
+      $repository = $em->getRepository(User::class);
+      $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
+
+      $em->remove($user);
+      $em->flush();
+      return new JsonResponse(['status' => 'User deleted']);
+    }
   
   protected function transformJsonBody(Request $request)
   {
