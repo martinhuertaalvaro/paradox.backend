@@ -50,7 +50,7 @@ class MembersController extends AbstractController
     $serializer = new Serializer($normalizers, $encoders);
     $repository = $entityManager->getRepository(User::class);
     $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
-    var_dump($user->getFriends());
+  
     $user = $user->getFriends();
 
 
@@ -87,7 +87,6 @@ class MembersController extends AbstractController
     $userEmail = $request->query->get('email');
     $friendId = $request->query->get('friendId');
     $request = $this->transformJsonBody($request);
-    $user = new User();
     $repository = $em->getRepository(User::class);
     $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
     $friends = $user->getFriends($friendId);

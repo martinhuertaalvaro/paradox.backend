@@ -91,8 +91,58 @@ class UserController extends AbstractController
     return new JsonResponse(['status' => 'User Created', 'email' => $request->get('email')]);
   }
 
-  
+  #[Route('/edit/active', name: 'api_edit_active', methods: 'POST')]
+  public function editActive(Request $request, EntityManagerInterface $em): JsonResponse
+  {
+    $tenantId = $request->query->get('tenantId');
+    $userEmail = $request->query->get('email');
+    $request = $this->transformJsonBody($request);
+    $repository = $em->getRepository(User::class);
+    $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
+    $user->setActive(!$user->isActive());
 
+
+    $em->persist($user);
+    $em->flush();
+
+    return new JsonResponse(['status' => 'Active: '. $user->isActive()]);
+  }
+
+  #[Route('/edit/roles/add/admin', name: 'api_add_admin', methods: 'POST')]
+  public function addAdmin(Request $request, EntityManagerInterface $em): JsonResponse
+  {
+    $tenantId = $request->query->get('tenantId');
+    $userEmail = $request->query->get('email');
+    $request = $this->transformJsonBody($request);
+    $repository = $em->getRepository(User::class);
+    $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
+    $user->setRoles('ROLE_ADMIN');
+
+
+    $em->persist($user);
+    $em->flush();
+
+    return new JsonResponse(['status' => 'Admin added']);
+  }
+
+  #[Route('/edit/roles/delete/admin', name: 'api_delete_admin', methods: 'POST')]
+  public function removeAdmin(Request $request, EntityManagerInterface $em): JsonResponse
+  {
+    $tenantId = $request->query->get('tenantId');
+    $userEmail = $request->query->get('email');
+    $request = $this->transformJsonBody($request);
+    $repository = $em->getRepository(User::class);
+    $user = $repository->findOneBy(['email' => $userEmail, 'tenantId' => $tenantId]);
+    $user->setAllRoles([]);
+
+
+    $em->persist($user);
+    $em->flush();
+
+    return new JsonResponse(['status' => 'Admin added']);
+  }
+
+  
   protected function transformJsonBody(Request $request)
   {
     $data = json_decode($request->getContent(), true);
