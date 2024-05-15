@@ -74,7 +74,7 @@ class UserController extends AbstractController
         $request->get('password')
       )
     );
-    if($request->get('role') == 'admin') {
+    if ($request->get('role') == 'admin') {
       $user->setRoles("ROLE_ADMIN");
     }
     $user->setName($request->get('name'));
@@ -105,7 +105,7 @@ class UserController extends AbstractController
     $em->persist($user);
     $em->flush();
 
-    return new JsonResponse(['status' => 'Active: '. $user->isActive()]);
+    return new JsonResponse(['status' => 'Active toggled']);
   }
 
   #[Route('/edit/roles/add/admin', name: 'api_add_admin', methods: 'POST')]
@@ -139,10 +139,10 @@ class UserController extends AbstractController
     $em->persist($user);
     $em->flush();
 
-    return new JsonResponse(['status' => 'Admin added']);
+    return new JsonResponse(['status' => 'Admin deleted']);
   }
 
-  
+
   protected function transformJsonBody(Request $request)
   {
     $data = json_decode($request->getContent(), true);
